@@ -1,15 +1,24 @@
-import { FC, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { FC, useEffect, useState } from "react";
+import { set, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import ComponentHeader from "../../shared/ComponentHeader";
 import RedStar from "../../shared/RedStar";
-
-// Define the input schema
-interface CategoryFormInputs {
-  name: string;
-  image: string;
-}
+import { useDispatch, useSelector } from "react-redux";
+import { RootState, AppDispatch } from "../../app/store";
+import {
+  createCategory,
+  setCategoryById,
+  editCategory,
+} from "../../redux/categories/categorySlice";
+import { Category } from "../../types/Shopping";
+import { toast } from "react-toastify";
+import {
+  clearError,
+  resetCategory,
+} from "../../redux/categories/categorySlice";
+import Loading from "../../shared/Loading";
+import { useLocation } from "react-router-dom";
 
 // Validation schema for the form
 const schema = yup.object().shape({
@@ -24,45 +33,114 @@ const schema = yup.object().shape({
     .url("Image URL must be a valid URL"),
 });
 
-// Define the props for the component
-interface NewCategoryProps {
-  category?: {
-    id: string;
-    name: string;
-    image: string;
-  };
-  onSubmit?: (data: CategoryFormInputs) => void;
-}
+const CategoryForm: FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const [initialCategoryId, setInitialCategoryId] = useState<string | null>(
+    null
+  );
+  /* if the route is like this http://localhost:5173/dashboard/categories/new, dont set the categoryId
+  but if it is like this http://localhost:5173/dashboard/categories/edit/k8WynsKoZRyaSN1mDSMc, then set the categoryId*/
+  const location = useLocation();
+  useEffect(() => {
+    if (location.pathname.includes("edit")) {
+      setInitialCategoryId(location.pathname.split("/").pop() || null);
+    } else {
+      dispatch(resetCategory());
+      setInitialCategoryId(null);
+      setValue("name", "");
+      setValue("image", "");
+    }
+  }, [location]);
 
-const NewCategory: FC<NewCategoryProps> = ({
-  category = null,
-  onSubmit = () => {},
-}) => {
+  // Get the category if the categoryId is set
+  useEffect(() => {
+    if (initialCategoryId) {
+      dispatch(setCategoryById(initialCategoryId));
+    }
+  }, [initialCategoryId]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetCategory());
+    };
+  }, []);
+
+  const {
+    category: InitialCategory,
+    loading,
+    error,
+  } = useSelector((state: RootState) => state.categories);
+
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<CategoryFormInputs>({
+    watch,
+  } = useForm<Category>({
     resolver: yupResolver(schema),
     // If the category prop is passed, set default values
     defaultValues: {
-      name: category?.name || "",
-      image: category?.image || "",
+      name: InitialCategory?.name || "",
+      image: InitialCategory?.image || "",
     },
   });
 
+  const watchImage = watch("image");
+
   // Effect to populate form values if category is provided (for editing)
   useEffect(() => {
-    if (category) {
-      setValue("name", category.name);
-      setValue("image", category.image);
+    if (InitialCategory) {
+      setValue("name", InitialCategory.name);
+      setValue("image", InitialCategory.image);
     }
-  }, [category, setValue]);
+  }, [InitialCategory, setValue]);
+
+  // Show a toast message if an error occurs
+  useEffect(() => {
+    if (error && error.length > 0) {
+      toast.error(error);
+
+      // Clear the error after showing the toast
+      return () => {
+        dispatch(clearError()); // Clear the error message when the component is unmounted
+      };
+    }
+  }, [error]);
+
+  // Handle form submission
+  const onSubmit = (data: Category) => {
+    if (InitialCategory) {
+      dispatch(
+        editCategory({
+          id: initialCategoryId as string,
+          updatedCategory: { id: initialCategoryId as string, ...data },
+        })
+      ).then((result) => {
+        if (editCategory.fulfilled.match(result)) {
+          toast.success("Category updated successfully");
+          setValue("name", "");
+          setValue("image", "");
+        } else {
+          toast.error("Failed to update category");
+        }
+      });
+    } else {
+      dispatch(createCategory(data)).then((result) => {
+        if (createCategory.fulfilled.match(result)) {
+          toast.success("Category added successfully");
+          setValue("name", "");
+          setValue("image", "");
+        }
+      });
+    }
+  };
 
   return (
     <>
-      <ComponentHeader heading={category ? "Edit Category" : "New Category"} />
+      <ComponentHeader
+        heading={InitialCategory ? "Edit Category" : "New Category"}
+      />
       <div className="p-4 bg-white rounded-lg shadow-md">
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* Category Name */}
@@ -115,12 +193,18 @@ const NewCategory: FC<NewCategoryProps> = ({
             )}
           </div>
 
+          {watchImage && (
+            <div className="w-fit justify-self-center mb-8 ">
+              <img className="mx-auto h-32 w-32" src={watchImage} alt="asdf" />
+            </div>
+          )}
+
           {/* Submit Button */}
           <button
             type="submit"
             className="ml-[23rem] bg-blue-500 hover:bg-blue-400 text-base transition-all duration-300 font-poppins text-white font-bold py-3 px-16 rounded-xl focus:outline-none focus:shadow-outline"
           >
-            {category ? "Update Category" : "Save Category"}
+            {loading ? <Loading /> : InitialCategory ? "Update" : "Save"}
           </button>
         </form>
       </div>
@@ -128,4 +212,4 @@ const NewCategory: FC<NewCategoryProps> = ({
   );
 };
 
-export default NewCategory;
+export default CategoryForm;

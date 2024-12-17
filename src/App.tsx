@@ -10,7 +10,7 @@ import CollectionPage from "./pages/CollectionPages";
 import { useDispatch } from "react-redux";
 import { initializeAuth } from "./redux/auth/authSlice";
 import { AppDispatch } from "./app/store";
-import NewCategory from "./components/categories/NewCategory";
+import CategoryForm from "./components/categories/NewCategory";
 import CategoryList from "./components/categories/CategoryList";
 
 const App: FC = () => {
@@ -34,7 +34,7 @@ const App: FC = () => {
             <Route path="*" element={<div>404</div>} />
 
             <Route path="categories" element={<CategoryList />} />
-            <Route path="categories/*" element={<NewCategory />} />
+            <Route path="categories/*" element={<CategoryForm />} />
           </Route>
         </Routes>
         <ToastContainer />

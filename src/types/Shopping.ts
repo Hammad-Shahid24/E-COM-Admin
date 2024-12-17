@@ -20,3 +20,9 @@ export interface CartItem {
   price: number;
   quantity: number;
 }
+
+export interface Category {
+  id?: string;
+  name: string;
+  image: string;
+}

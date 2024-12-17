@@ -1,24 +1,16 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { auth } from "../../config/firebase"; // import from your Firebase config
-import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut,
-} from "firebase/auth";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
-import app from "../../config/firebase";
+// src/redux/slices/authSlice.ts
 
-const db = getFirestore(app);
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {
+  signInWithCredentials,
+  logOutUser,
+  initializeAuthState,
+} from "./authService";
 
 interface AuthState {
   user: Record<string, any> | null;
   loading: boolean;
   error: string | null;
-}
-
-interface SignInPayload {
-  email: string;
-  password: string;
 }
 
 const initialState: AuthState = {
@@ -27,78 +19,43 @@ const initialState: AuthState = {
   error: null,
 };
 
-interface UserData {
-  isAdmin: boolean;
-  [key: string]: any; // Add other user data properties as needed
-}
-
-const fetchUserData = async (uid: string): Promise<UserData> => {
-  try {
-    const userDoc = await getDoc(doc(db, "users", uid));
-    if (userDoc.exists()) {
-      const userData = userDoc.data() as UserData;
-      if (userData.isAdmin) {
-        return userData;
-      } else {
-        throw new Error("User is not an admin.");
-      }
-    } else {
-      throw new Error("User data not found in Firestore.");
-    }
-  } catch (error) {
-    console.error("Error fetching user data:", error);
-    throw error;
-  }
-};
-
-// Sign in user
+// Sign in action
 export const signIn = createAsyncThunk(
   "auth/signIn",
-  async ({ email, password }: SignInPayload, { rejectWithValue }) => {
+  async (
+    { email, password }: { email: string; password: string },
+    { rejectWithValue }
+  ) => {
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      const user = userCredential.user;
-
-      return await fetchUserData(user.uid);
+      const userData = await signInWithCredentials(email, password);
+      return userData;
     } catch (error: any) {
-      await signOut(auth);
       return rejectWithValue(error.message || "An unknown error occurred.");
     }
   }
 );
 
-// Log out user
+// Log out action
 export const logOut = createAsyncThunk(
   "auth/logOut",
   async (_, { rejectWithValue }) => {
     try {
-      await signOut(auth);
+      await logOutUser();
     } catch (error: any) {
       return rejectWithValue(error.message || "An unknown error occurred.");
     }
   }
 );
 
-// Thunk to initialize the auth state (Check persistence on reload)
+// Initialize auth state (Check persistence on reload)
 export const initializeAuth = createAsyncThunk(
   "auth/initializeAuth",
   async (_, { dispatch }) => {
-    return new Promise<Record<string, any> | null>((resolve) => {
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          const userData = await fetchUserData(user.uid);
-          dispatch(setUser(userData)); // Ensure `setUser` is called here
-          resolve(userData);
-        } else {
-          resolve(null);
-        }
-      });
-    });
+    const userData = await initializeAuthState();
+    if (userData) {
+      dispatch(setUser(userData));
+    }
+    return userData;
   }
 );
 
@@ -140,7 +97,7 @@ const authSlice = createSlice({
       .addCase(signIn.rejected, (state, action) => {
         console.error("Sign-in failed:", action);
         state.loading = false;
-        state.error = action.payload as string; // Ensure this is a string
+        state.error = action.payload as string;
       })
       .addCase(logOut.fulfilled, (state) => {
         state.user = null;
