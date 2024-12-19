@@ -1,28 +1,21 @@
-export interface Rating {
-  rate: number;
-  count?: number;
-}
-
-export interface Product {
-  id: number;
-  title: string;
-  description: string;
-  image: string;
-  category: string;
-  price: number;
-  rating: Rating;
-}
-
-export interface CartItem {
-  id: string;
-  image: string;
-  name: string;
-  price: number;
-  quantity: number;
-}
+import { Timestamp } from "firebase/firestore";
 
 export interface Category {
   id?: string;
   name: string;
   image: string;
+  createdAt?: Timestamp;
+  updatedAt?: Timestamp;
+}
+
+export interface Product {
+  id?: string; // Firestore document ID
+  name: string;
+  price: number;
+  stock: number;
+  description: string;
+  images: string[]; // Array of image URLs
+  categoryId: string; // Reference to the category document ID
+  createdAt?: Timestamp | Date | string;
+  updatedAt?: Timestamp | Date | string;
 }

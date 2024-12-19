@@ -8,6 +8,7 @@ import {
   where,
   doc,
   deleteDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 import app from "../../config/firebase";
 import { Category } from "../../types/Shopping";
@@ -52,7 +53,11 @@ export const addCategory = async (category: Category): Promise<Category> => {
     }
 
     // Add a new category and get the docRef
-    const docRef = await addDoc(categoriesCol, category);
+    const docRef = await addDoc(categoriesCol, {
+      ...category,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
 
     // Update the document with its own ID
     await updateDoc(docRef, { id: docRef.id });
@@ -90,7 +95,10 @@ export const updateCategory = async (
     }
 
     const categoryRef = doc(db, "categories", id);
-    await updateDoc(categoryRef, { ...updatedCategory });
+    await updateDoc(categoryRef, {
+      ...updatedCategory,
+      updatedAt: serverTimestamp(),
+    });
 
     // Return the updated category, including its ID
     return { ...updatedCategory, id };

@@ -11,15 +11,15 @@ interface HeaderProps {
 
 const Header: FC<HeaderProps> = ({ toggleDrawer, isDrawerOpen }) => {
   return (
-    <header className="w-full bg-[#fbfbfc] dark:bg-gray-800 ">
-      <div className="w-full mx-auto max-w-screen-2xl">
+    <header className={`w-full bg-[#fbfbfc] fixed top-0 left-0 right-0 z-50 `}>
+      <div className="w-full mx-auto ">
         <div className="flex justify-between items-center py-4  border-b border-gray-300 ">
-          <div className="flex items-center gap-2 pl-5">
+          <div className="flex items-center gap-2 pl-5 animate-all duration-300">
             <RiMenuUnfoldFill
               onClick={toggleDrawer}
               className={`${
-                isDrawerOpen && "hidden"
-              } w-6 h-6 text-blue-600 cursor-pointer`}
+                isDrawerOpen && " hidden "
+              } w-6 h-6 text-blue-600 cursor-pointer  animate-all duration-300`}
             />
           </div>
           <div className="flex items-center pr-5 gap-5">

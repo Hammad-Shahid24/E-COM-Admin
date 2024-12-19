@@ -21,13 +21,15 @@ const Pagination: FC<PaginationProps> = ({
   };
 
   return (
-    <div className="flex justify-center items-center space-x-2 mt-16 font-poppins">
+    <div className="flex justify-center items-center space-x-3 mt-8 font-poppins">
       {/* Previous Button */}
       <button
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className={`px-3 text-sm dark:bg-gray-700 text-gray-500 hover:text-gray-400 transition-all duration-300 dark:text-gray-200 rounded-md ${
-          currentPage === 1 ? "cursor-default opacity-0" : ""
+        className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+          currentPage === 1
+            ? "cursor-not-allowed opacity-50 text-gray-400"
+            : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 hover:dark:bg-gray-600"
         }`}
       >
         {t("collectionspage.pagination.previous")}
@@ -39,10 +41,10 @@ const Pagination: FC<PaginationProps> = ({
           <button
             key={index}
             onClick={() => handlePageChange(index + 1)}
-            className={`px-1.5 py-0.5 border ${
+            className={`px-3 py-1 text-sm font-medium rounded-md border transition-all duration-200 ${
               currentPage === index + 1
-                ? "border-gray-900  text-gray-700 cursor-default"
-                : "border-transparent dark:border-gray-700  text-gray-700 dark:text-gray-200 hover:text-gray-400 duration-300 transition-all"
+                ? "bg-gray-700 text-white border-gray-700 cursor-default"
+                : "bg-transparent text-gray-700 dark:text-gray-200 border-transparent hover:text-gray-500 dark:hover:text-gray-400 hover:border-gray-300"
             }`}
           >
             {index + 1}
@@ -54,8 +56,10 @@ const Pagination: FC<PaginationProps> = ({
       <button
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className={`px-3 text-sm dark:bg-gray-700 text-gray-500 hover:text-gray-400 transition-all duration-300 dark:text-gray-200 rounded-md ${
-          currentPage === totalPages ? "cursor-default opacity-0" : ""
+        className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+          currentPage === totalPages
+            ? "cursor-not-allowed opacity-50 text-gray-400"
+            : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 hover:dark:bg-gray-600"
         }`}
       >
         {t("collectionspage.pagination.next")}

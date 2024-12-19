@@ -10,8 +10,10 @@ import CollectionPage from "./pages/CollectionPages";
 import { useDispatch } from "react-redux";
 import { initializeAuth } from "./redux/auth/authSlice";
 import { AppDispatch } from "./app/store";
-import CategoryForm from "./components/categories/NewCategory";
+import CategoryForm from "./components/categories/CategoryForm";
 import CategoryList from "./components/categories/CategoryList";
+import ProductList from "./components/products/ProductList";
+import ProductForm from "./components/products/ProductForm";
 
 const App: FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -29,12 +31,12 @@ const App: FC = () => {
               path="testing"
               element={<div className="w-full h-screen ">hello</div>}
             />
-            <Route path="collections/*" element={<CollectionPage />} />
-
             <Route path="*" element={<div>404</div>} />
-
+            <Route path="collections/*" element={<CollectionPage />} />
             <Route path="categories" element={<CategoryList />} />
             <Route path="categories/*" element={<CategoryForm />} />
+            <Route path="products" element={<ProductList />} />
+            <Route path="products/*" element={<ProductForm />} />
           </Route>
         </Routes>
         <ToastContainer />

@@ -1,7 +1,7 @@
 import { FC } from "react";
 import NavItem from "./NavItem";
 import { RiMenuFoldFill } from "react-icons/ri";
-import { Square3Stack3DIcon } from "@heroicons/react/20/solid";
+import { Square3Stack3DIcon, CubeIcon } from "@heroicons/react/20/solid";
 import Logo from "../../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 
@@ -37,6 +37,21 @@ const NavDrawerContent: FC<NavDrawerContentProps> = ({ onClose }) => {
             {
               label: "New Category",
               onClick: () => navigate("categories/new"),
+            },
+          ]}
+        />
+        <NavItem
+          icon={<CubeIcon />}
+          label="Products"
+          expandable
+          subNavItems={[
+            {
+              label: "Product List",
+              onClick: () => navigate("products"),
+            },
+            {
+              label: "New Product",
+              onClick: () => navigate("products/new"),
             },
           ]}
         />
