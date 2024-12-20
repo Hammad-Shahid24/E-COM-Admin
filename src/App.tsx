@@ -27,10 +27,6 @@ const App: FC = () => {
         <Routes>
           <Route path="/" element={<AuthPage />} />
           <Route path="dashboard" element={<Layout />}>
-            <Route
-              path="testing"
-              element={<div className="w-full h-screen ">hello</div>}
-            />
             <Route path="*" element={<div>404</div>} />
             <Route path="collections/*" element={<CollectionPage />} />
             <Route path="categories" element={<CategoryList />} />

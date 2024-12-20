@@ -19,7 +19,7 @@ const Header: FC<HeaderProps> = ({ toggleDrawer, isDrawerOpen }) => {
               onClick={toggleDrawer}
               className={`${
                 isDrawerOpen && " hidden "
-              } w-6 h-6 text-blue-600 cursor-pointer  animate-all duration-300`}
+              } w-6 h-6 text-blue-600 hover:text-blue-800 cursor-pointer animate-all duration-300`}
             />
           </div>
           <div className="flex items-center pr-5 gap-5">

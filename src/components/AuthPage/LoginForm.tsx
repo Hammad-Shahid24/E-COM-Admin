@@ -45,7 +45,7 @@ const LoginForm: FC = () => {
     await dispatch(signIn({ email, password })).then((result) => {
       if (signIn.fulfilled.match(result)) {
         toast.success("Login successful!");
-        navigate("/dashboard");
+        navigate("/dashboard/home");
       }
     });
   };

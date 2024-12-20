@@ -73,14 +73,16 @@ const NavItem: FC<NavItemProps> = ({
             <span className="pr-3">
               {React.cloneElement(icon, {
                 className: `w-5 h-5 group-hover:text-blue-500 dark:text-white transition-all duration-300 ${
-                  expandedLabel === label ? "text-blue-500" : "text-gray-500"
+                  expandedLabel === label || activeLabel === label
+                    ? "text-blue-500"
+                    : "text-gray-500"
                 }`,
               })}
             </span>
           )}
           <h1
             className={`text-md group-hover:text-blue-500 font-medium font-poppins transition-all duration-300 ${
-              expandedLabel === label
+              expandedLabel === label || activeLabel === label
                 ? "font-medium text-blue-500"
                 : "text-gray-700"
             }`}
