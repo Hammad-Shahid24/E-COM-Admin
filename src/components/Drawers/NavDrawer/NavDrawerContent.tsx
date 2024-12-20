@@ -1,7 +1,8 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import NavItem from "./NavItem";
 import { RiMenuFoldFill } from "react-icons/ri";
 import { Square3Stack3DIcon, CubeIcon } from "@heroicons/react/20/solid";
+import { SiAftership } from "react-icons/si";
 import Logo from "../../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 
@@ -11,10 +12,13 @@ interface NavDrawerContentProps {
 
 const NavDrawerContent: FC<NavDrawerContentProps> = ({ onClose }) => {
   const navigate = useNavigate();
+  const [expandedLabel, setExpandedLabel] = useState<string | null>(
+    "Categories"
+  );
+  const [activeLabel, setActiveLabel] = useState<string | null>(null);
 
   return (
-    <div className="flex flex-col  items-center justify-center">
-      {/* Menu Text and Close Button */}
+    <div className="flex flex-col items-center justify-center">
       <div className="flex justify-between items-center bg-white w-full py-5 px-5 border-b-2 border-gray-50 dark:border-gray-700 relative">
         <img src={Logo} alt="logo" className="w-36 h-15" />
         <RiMenuFoldFill
@@ -29,11 +33,12 @@ const NavDrawerContent: FC<NavDrawerContentProps> = ({ onClose }) => {
           icon={<Square3Stack3DIcon />}
           label="Categories"
           expandable
+          expandedLabel={expandedLabel}
+          setIsExpanded={setExpandedLabel}
+          activeLabel={activeLabel}
+          setIsActive={setActiveLabel}
           subNavItems={[
-            {
-              label: "Category List",
-              onClick: () => navigate("categories"),
-            },
+            { label: "Category List", onClick: () => navigate("categories") },
             {
               label: "New Category",
               onClick: () => navigate("categories/new"),
@@ -44,16 +49,23 @@ const NavDrawerContent: FC<NavDrawerContentProps> = ({ onClose }) => {
           icon={<CubeIcon />}
           label="Products"
           expandable
+          expandedLabel={expandedLabel}
+          setIsExpanded={setExpandedLabel}
+          activeLabel={activeLabel}
+          setIsActive={setActiveLabel}
           subNavItems={[
-            {
-              label: "Product List",
-              onClick: () => navigate("products"),
-            },
-            {
-              label: "New Product",
-              onClick: () => navigate("products/new"),
-            },
+            { label: "Product List", onClick: () => navigate("products") },
+            { label: "New Product", onClick: () => navigate("products/new") },
           ]}
+        />
+        <NavItem
+          icon={<SiAftership />}
+          label="Orders"
+          expandable={false}
+          setIsExpanded={setExpandedLabel}
+          activeLabel={activeLabel}
+          setIsActive={setActiveLabel}
+          onClick={() => navigate("orders")}
         />
       </div>
     </div>

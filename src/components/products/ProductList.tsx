@@ -131,9 +131,7 @@ const ProductList: FC = () => {
           await dispatch(fetchAllProducts({ pageSize: count }));
         }}
         sortKey={sortKey}
-        setSortKey={setSortKey}
         sortOrder={sortOrder}
-        setSortOrder={setSortOrder}
         sortOptions={[
           {
             key: "createdAt-desc",
@@ -183,23 +181,7 @@ const ProductList: FC = () => {
           );
         }}
       />
-      {/* <button
-        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-        onClick={async () => {
-          await dispatch(fetchAllProducts({ pageSize }));
-          console.log(sortKey, sortOrder);
-        }}
-      >
-        fetch
-      </button>
-      <button
-        className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
-        onClick={() => {
-          dispatch(resetProducts());
-        }}
-      >
-        Reset
-      </button> */}
+
       <div className="p-4 bg-white rounded-b-lg shadow-md">
         <table className="min-w-full">
           <thead className="mb-4">

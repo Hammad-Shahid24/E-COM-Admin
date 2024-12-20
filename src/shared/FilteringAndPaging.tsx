@@ -14,8 +14,6 @@ interface FilteringAndPagingProps {
   //the below two are used to set the label of the selected option in the select sort element
   sortKey: string;
   sortOrder: "asc" | "desc";
-  setSortKey: (key: string) => void;
-  setSortOrder: (sortOrder: "asc" | "desc") => void;
   sortOptions: { key: string; label: string }[]; // List of available sorting criteria
   onSortChange: (key: string) => Promise<void>; // Function to notify parent about sort changes
 }
@@ -29,8 +27,6 @@ const FilteringAndPaging: FC<FilteringAndPagingProps> = ({
   fetchMore,
   sortKey,
   sortOrder,
-  setSortKey,
-  setSortOrder,
   sortOptions,
   onSortChange,
 }) => {
@@ -86,7 +82,7 @@ const FilteringAndPaging: FC<FilteringAndPagingProps> = ({
         </div>
 
         {/* Search input */}
-        <div className="flex items-center w-full md:w-auto">
+        {/* <div className="flex items-center w-full md:w-auto">
           <input
             type="text"
             value={searchTerm}
@@ -94,7 +90,7 @@ const FilteringAndPaging: FC<FilteringAndPagingProps> = ({
             placeholder="Search by name"
             className="border border-gray-300 rounded-lg py-2 px-4 text-gray-700 focus:outline-none w-full"
           />
-        </div>
+        </div> */}
 
         {/* Sort selector */}
         <div className="flex items-center space-x-4 w-full md:w-auto">
