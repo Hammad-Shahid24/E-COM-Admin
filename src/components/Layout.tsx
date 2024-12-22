@@ -9,7 +9,7 @@ import Footer from "./Footer/Footer";
 const Layout: FC = () => {
   const { user } = useSelector((state: RootState) => state.auth); // Get user from Redux state
   const navigate = useNavigate();
-  const [isNavDrawerOpen, setIsNavDrawerOpen] = useState(true); // State to manage nav drawer visibility
+  const [isNavDrawerOpen, setIsNavDrawerOpen] = useState(false); // State to manage nav drawer visibility
   const location = useLocation(); // Get current location (route)
 
   useLayoutEffect(() => {

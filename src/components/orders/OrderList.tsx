@@ -2,58 +2,57 @@ import { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ComponentHeader from "../../shared/ComponentHeader";
 import { FaEdit, FaTrash, FaRegEye } from "react-icons/fa"; // Importing icons
-import { PiPlugsFill } from "react-icons/pi";
 import { Tooltip } from "react-tooltip";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../app/store";
 import {
-  fetchAllProducts,
-  removeProduct,
-  resetProduct,
-  resetProducts,
-  setProductById,
-} from "../../redux/products/productSlice";
-import { Product } from "../../types/Shopping";
+  fetchAllOrders,
+  removeOrder,
+  resetOrder,
+  // resetOrders,
+  setOrderById,
+} from "../../redux/orders/orderSlice";
+import { Order } from "../../types/Shopping";
 import { toast } from "react-toastify";
-import { clearError } from "../../redux/products/productSlice";
+import { clearError } from "../../redux/orders/orderSlice";
 import Loading from "../../shared/Loading";
 import Swal from "sweetalert2";
 import Pagination from "../../shared/pagination";
 import FiltrationAndPaging from "../../shared/FilteringAndPaging";
-import ProductActionsModal from "./ActionsModal";
+// import OrderActionsModal from "./ActionsModal";
 
-const ProductList: FC = () => {
+const OrdersList: FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { products, loading, error, totalProducts } = useSelector(
-    (state: RootState) => state.products
+  const { orders, loading, error, totalOrders } = useSelector(
+    (state: RootState) => state.orders
   );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleOpenModal = (product: Product) => {
-    dispatch(setProductById(product.id!));
+  const handleOpenModal = (order: Order) => {
+    dispatch(setOrderById(order.id!));
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
-    dispatch(resetProduct());
+    dispatch(resetOrder());
     setIsModalOpen(false);
   };
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentPageProducts, setCurrentPageProducts] = useState<Product[]>([]);
+  const [currentPageOrders, setCurrentPageOrders] = useState<Order[]>([]);
   const pageSizeOptions = [2, 3, 4];
   const [pageSize, setPageSize] = useState(pageSizeOptions[0]);
-  const totalPages = Math.ceil(totalProducts! / pageSize);
+  const totalPages = Math.ceil(totalOrders! / pageSize);
 
-  const [sortKey, setSortKey] = useState<keyof Product | string>("createdAt");
+  const [sortKey, setSortKey] = useState<keyof Order | string>("createdAt");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
-  // Fetch products when the component mounts
+  // Fetch orders when the component mounts
   useEffect(() => {
-    if (products.length === 0) {
-      dispatch(fetchAllProducts({ pageSize, sortField: sortKey, sortOrder }));
+    if (orders.length === 0) {
+      dispatch(fetchAllOrders({ pageSize, sortField: sortKey, sortOrder }));
     }
   }, []);
 
@@ -69,7 +68,7 @@ const ProductList: FC = () => {
     }
   }, [error, dispatch]);
 
-  // Handle deletion of a product with confirmation
+  // Handle deletion of an order with confirmation
   const handleDelete = (id: string) => {
     Swal.fire({
       title: "Are you sure?",
@@ -80,50 +79,48 @@ const ProductList: FC = () => {
       cancelButtonText: "No, cancel!",
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log("Deleting product with id:", id);
-        dispatch(removeProduct(id))
+        console.log("Deleting order with id:", id);
+        dispatch(removeOrder(id))
           .then(() => {
-            Swal.fire("Deleted!", "Your product has been deleted.", "success");
+            Swal.fire("Deleted!", "Your order has been deleted.", "success");
           })
           .catch((error) => {
             Swal.fire(
               "Error!",
-              "There was an error deleting the product.",
+              "There was an error deleting the order.",
               error
             );
           });
       } else if (result.dismiss === Swal.DismissReason.cancel) {
-        Swal.fire("Cancelled", "Your product is safe :)", "error");
+        Swal.fire("Cancelled", "Your order is safe :)", "error");
       }
     });
   };
 
-  // Handle the editing of a product
-  const handleEdit = (product: Product) => {
+  // Handle the editing of an order
+  const handleEdit = (order: Order) => {
     // Navigate to the edit page
-    navigate(`edit/${product.id}`, {
-      state: { product }, // Passing the product data to the edit page
+    navigate(`edit/${order.id}`, {
+      state: { order }, // Passing the order data to the edit page
     });
   };
 
-  // Handle the viewing of a product
-  const handleView = (product: Product) => {
+  // Handle the viewing of an order
+  const handleView = (order: Order) => {
     Swal.fire({
-      imageUrl: product.images[0],
-      imageWidth: 400,
-      imageHeight: 300,
-      imageAlt: product.name,
-      showCloseButton: false,
+      title: `Order #${order.id}`,
+      text: `Customer: ${order.userId}\nTotal: $${order.totalAmount}`,
+      showCloseButton: true,
       showCancelButton: false,
       showConfirmButton: false,
-      padding: 0,
+      padding: "1rem",
     });
   };
 
   if (loading) {
     return (
       <div>
-        <ComponentHeader heading="Product List" />
+        <ComponentHeader heading="Order List" />
         <div className="p-4 flex justify-center bg-white rounded-lg shadow-md">
           <Loading />
         </div>
@@ -133,18 +130,16 @@ const ProductList: FC = () => {
 
   return (
     <>
-      <ComponentHeader heading="Product List" />
+      <ComponentHeader heading="Order List" />
       <FiltrationAndPaging
-        items={products}
-        currentPageProducts={currentPageProducts}
-        setCurrentPageProducts={setCurrentPageProducts}
+        items={orders}
         pageSizeOptions={pageSizeOptions}
         pageSize={pageSize}
         setPageSize={setPageSize}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
         fetchMore={async (count: number) => {
-          await dispatch(fetchAllProducts({ pageSize: count }));
+          await dispatch(fetchAllOrders({ pageSize: count }));
         }}
         sortKey={sortKey}
         sortOrder={sortOrder}
@@ -158,38 +153,30 @@ const ProductList: FC = () => {
             label: "Date Created (Old to New)",
           },
           {
-            key: "name-desc",
-            label: "Name (Z-A)",
+            key: "customerName-desc",
+            label: "Customer Name (Z-A)",
           },
           {
-            key: "name-asc",
-            label: "Name (A-Z)",
+            key: "customerName-asc",
+            label: "Customer Name (A-Z)",
           },
           {
-            key: "price-desc",
-            label: "Price (High to Low)",
+            key: "total-desc",
+            label: "Total (High to Low)",
           },
           {
-            key: "price-asc",
-            label: "Price (Low to High)",
-          },
-          {
-            key: "stock-desc",
-            label: "Stock (High to Low)",
-          },
-          {
-            key: "stock-asc",
-            label: "Stock (Low to High)",
+            key: "total-asc",
+            label: "Total (Low to High)",
           },
         ]}
         onSortChange={async (key: string) => {
           const [field, order] = key.split("-");
           setSortKey(field);
           setSortOrder(order as "asc" | "desc");
-          dispatch(resetProducts());
+          // dispatch(resetOrders());
           setCurrentPage(1);
           await dispatch(
-            fetchAllProducts({
+            fetchAllOrders({
               pageSize,
               sortField: field,
               sortOrder: order as "asc" | "desc",
@@ -203,13 +190,13 @@ const ProductList: FC = () => {
           <thead className="mb-4">
             <tr>
               <th className="px-4 py-2 bg-gray-50 text-left text-base font-semibold text-gray-900 w-1/3">
-                Product Name
+                Order ID
               </th>
               <th className="px-4 py-2 bg-gray-50 text-left text-base font-semibold text-gray-900 w-1/4">
-                Price
+                Customer Name
               </th>
               <th className="px-4 py-2 bg-gray-50 text-left text-base font-semibold text-gray-900 w-1/4">
-                Stock
+                Total
               </th>
               <th className="px-4 py-2 bg-gray-50 text-center text-base font-semibold text-gray-900 w-1/4">
                 Actions
@@ -217,7 +204,7 @@ const ProductList: FC = () => {
             </tr>
           </thead>
           <tbody className="mt-4">
-            {currentPageProducts.map((product, index) => {
+            {currentPageOrders.map((order, index) => {
               const rowClass = index % 2 === 0 ? "bg-gray-100" : "bg-white";
 
               return (
@@ -227,24 +214,15 @@ const ProductList: FC = () => {
                 >
                   <td className="py-2 px-4 w-1/3">
                     <div className="flex items-center">
-                      <img
-                        src={product.images[0]}
-                        alt={product.name}
-                        className="w-12 h-12 mr-4"
-                      />
                       <span className="text-sm text-gray-700 font-medium">
-                        {product.name}
+                        {order.id}
                       </span>
                     </div>
                   </td>
+
                   <td className="py-1 px-4 w-1/4">
                     <span className="text-sm text-gray-700 font-medium">
-                      ${product.price}
-                    </span>
-                  </td>
-                  <td className="py-1 px-4 w-1/4">
-                    <span className="text-sm text-gray-700 font-medium">
-                      {product.stock}
+                      ${order.totalAmount}
                     </span>
                   </td>
                   <td className="py-1 pr-4 w-1/4">
@@ -253,17 +231,17 @@ const ProductList: FC = () => {
                       <button
                         data-tooltip-id="my-tooltip"
                         data-tooltip-content="Actions"
-                        onClick={() => handleOpenModal(product)} // Passing product to the view handler
+                        onClick={() => handleOpenModal(order)} // Passing order to the view handler
                         className="flex items-center px-3 py-1.5 text-sm text-teal-800 hover:bg-blue-100 rounded-lg transition-colors"
                       >
-                        <PiPlugsFill />
+                        <FaRegEye />
                       </button>
 
                       {/* View Button with Tooltip */}
                       <button
                         data-tooltip-id="my-tooltip"
-                        data-tooltip-content="View Image"
-                        onClick={() => handleView(product)} // Passing product to the view handler
+                        data-tooltip-content="View Order"
+                        onClick={() => handleView(order)} // Passing order to the view handler
                         className="flex items-center px-3 py-1.5 text-sm text-gray-500 hover:bg-blue-100 rounded-lg transition-colors"
                       >
                         <FaRegEye />
@@ -273,7 +251,7 @@ const ProductList: FC = () => {
                       <button
                         data-tooltip-id="my-tooltip"
                         data-tooltip-content="Edit"
-                        onClick={() => handleEdit(product)} // Passing product to the edit handler
+                        onClick={() => handleEdit(order)} // Passing order to the edit handler
                         className="flex items-center px-3 py-1.5 text-sm text-blue-500 hover:bg-blue-100 rounded-lg transition-colors"
                       >
                         <FaEdit />
@@ -283,7 +261,7 @@ const ProductList: FC = () => {
                       <button
                         data-tooltip-id="my-tooltip"
                         data-tooltip-content="Delete"
-                        onClick={() => product.id && handleDelete(product.id)}
+                        onClick={() => order.id && handleDelete(order.id)}
                         className="flex items-center px-3 py-1.5 text-sm text-red-500 hover:bg-red-100 rounded-lg transition-colors"
                       >
                         <FaTrash />
@@ -296,14 +274,14 @@ const ProductList: FC = () => {
           </tbody>
         </table>
         <Pagination
-          items={products}
+          items={orders}
           pageSize={pageSize}
-          totalItems={totalProducts as number}
+          totalItems={totalOrders as number}
           totalPages={totalPages}
-          setCurrentPageItems={setCurrentPageProducts}
+          setCurrentPageItems={setCurrentPageOrders}
           fetchMore={async () => {
             await dispatch(
-              fetchAllProducts({ pageSize, sortField: sortKey, sortOrder })
+              fetchAllOrders({ pageSize, sortField: sortKey, sortOrder })
             );
           }}
           currentPage={currentPage}
@@ -319,10 +297,10 @@ const ProductList: FC = () => {
             fontWeight: "500",
           }}
         />
-        {isModalOpen && <ProductActionsModal onClose={handleCloseModal} />}
+        {/* {isModalOpen && <OrderActionsModal onClose={handleCloseModal} />} */}
       </div>
     </>
   );
 };
 
-export default ProductList;
+export default OrdersList;

@@ -14,6 +14,10 @@ import CategoryForm from "./components/categories/CategoryForm";
 import CategoryList from "./components/categories/CategoryList";
 import ProductList from "./components/products/ProductList";
 import ProductForm from "./components/products/ProductForm";
+import TagList from "./components/tags/TagList";
+import TagForm from "./components/tags/TagForm";
+import VoucherList from "./components/vouchers/VoucherList";
+import OrderList from "./components/orders/OrderList";
 
 const App: FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -33,6 +37,10 @@ const App: FC = () => {
             <Route path="categories/*" element={<CategoryForm />} />
             <Route path="products" element={<ProductList />} />
             <Route path="products/*" element={<ProductForm />} />
+            <Route path="tags" element={<TagList />} />
+            <Route path="tags/*" element={<TagForm />} />
+            <Route path="vouchers" element={<VoucherList />} />
+            <Route path="orders" element={<OrderList />} />
           </Route>
         </Routes>
         <ToastContainer />

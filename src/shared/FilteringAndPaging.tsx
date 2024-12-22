@@ -1,10 +1,8 @@
 import { FC, useState, useEffect } from "react";
-import { Product } from "../types/Shopping";
+import { Product, Order } from "../types/Shopping";
 
 interface FilteringAndPagingProps {
-  items: Product[];
-  currentPageProducts: Product[];
-  setCurrentPageProducts: (products: Product[]) => void;
+  items: Product[] | Order[];
   pageSizeOptions: number[];
   pageSize: number;
   setPageSize: (size: number) => void;

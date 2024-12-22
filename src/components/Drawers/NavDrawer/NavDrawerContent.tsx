@@ -126,7 +126,7 @@ const NavDrawerContent: FC<NavDrawerContentProps> = ({
           ]}
           onClick={() => navigate("vouchers")}
         />
-        <NavItem
+        {/* <NavItem
           icon={<PiListHeartFill />}
           label="Deals"
           expandable
@@ -139,7 +139,7 @@ const NavDrawerContent: FC<NavDrawerContentProps> = ({
             { label: "New Deal", onClick: () => navigate("deals/new") },
           ]}
           onClick={() => navigate("deals")}
-        />
+        /> */}
         <NavItem
           family="CUSTOMERS"
           icon={<FaPeopleGroup />}

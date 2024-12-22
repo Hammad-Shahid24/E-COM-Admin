@@ -212,211 +212,221 @@ const ProductForm: FC = () => {
       <ComponentHeader
         heading={initialProduct ? "Edit Product" : "New Product"}
       />
-      <div className="p-4 bg-white rounded-lg shadow-md">
+      <div className="p-6 bg-white rounded-lg shadow-md">
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* Product Name */}
-          <div className="flex items-center md:gap-60 mb-8">
+          <div className="flex items-center justify-between mb-6">
             <label
-              className="text-gray-700 text-sm font-semibold min-w-32 flex items-center"
               htmlFor="name"
+              className="text-gray-700 text-sm font-semibold min-w-[120px] flex items-center"
             >
               Product Name
               <RedStar />
             </label>
-            <input
-              id="name"
-              type="text"
-              placeholder="Product name"
-              {...register("name")}
-              className={`appearance-none border rounded w-full py-2 px-3 text-gray-700 placeholder:text-sm placeholder:font-normal leading-tight focus:outline-none focus:shadow-outline ${
-                errors.name ? "border-red-500" : ""
-              }`}
-            />
-            {errors.name && (
-              <p className="text-red-500 text-xs italic">
-                {errors.name.message}
-              </p>
-            )}
+            <div className="flex-1">
+              <input
+                id="name"
+                type="text"
+                placeholder="Enter product name"
+                {...register("name")}
+                className={`w-full py-2 px-4 border rounded text-gray-700 placeholder:text-sm focus:outline-none focus:shadow-md transition-all ${
+                  errors.name ? "border-red-500" : "border-gray-300"
+                }`}
+              />
+              {errors.name && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.name.message}
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Category */}
-          <div className="flex items-center md:gap-60 mb-8">
+          <div className="flex items-center justify-between mb-6">
             <label
-              className="text-gray-700 text-sm font-semibold min-w-32 flex items-center"
               htmlFor="categoryId"
+              className="text-gray-700 text-sm font-semibold min-w-[120px] flex items-center"
             >
               Category
               <RedStar />
             </label>
-            <select
-              id="categoryId"
-              {...register("categoryId")}
-              className={`appearance-none border rounded w-full py-2 px-3 text-gray-700 placeholder:text-sm placeholder:font-normal leading-tight focus:outline-none focus:shadow-outline ${
-                errors.categoryId ? "border-red-500" : ""
-              }`}
-            >
-              <option value="" hidden>
-                Select Category
-              </option>
-              {/* Example: */}
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
+            <div className="flex-1">
+              <select
+                id="categoryId"
+                {...register("categoryId")}
+                className={`w-full py-2 px-4 border rounded text-gray-700 focus:outline-none focus:shadow-md transition-all ${
+                  errors.categoryId ? "border-red-500" : "border-gray-300"
+                }`}
+              >
+                <option value="" hidden>
+                  Select Category
                 </option>
-              ))}
-            </select>
-            {errors.categoryId && (
-              <p className="text-red-500 text-xs italic">
-                {errors.categoryId.message}
-              </p>
-            )}
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+              {errors.categoryId && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.categoryId.message}
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Price */}
-          <div className="flex items-center md:gap-60 mb-8">
+          <div className="flex items-center justify-between mb-6">
             <label
-              className="text-gray-700 text-sm font-semibold min-w-32 flex items-center"
               htmlFor="price"
+              className="text-gray-700 text-sm font-semibold min-w-[120px] flex items-center"
             >
               Price
               <RedStar />
             </label>
-            <input
-              id="price"
-              type="number"
-              placeholder="Price"
-              {...register("price")}
-              className={`appearance-none border rounded w-full py-2 px-3 text-gray-700 placeholder:text-sm placeholder:font-normal leading-tight focus:outline-none focus:shadow-outline ${
-                errors.price ? "border-red-500" : ""
-              }`}
-            />
-            {errors.price && (
-              <p className="text-red-500 text-xs italic">
-                {errors.price.message}
-              </p>
-            )}
+            <div className="flex-1">
+              <input
+                id="price"
+                type="number"
+                placeholder="Enter price"
+                {...register("price")}
+                className={`w-full py-2 px-4 border rounded text-gray-700 focus:outline-none focus:shadow-md transition-all ${
+                  errors.price ? "border-red-500" : "border-gray-300"
+                }`}
+              />
+              {errors.price && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.price.message}
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Stock */}
-          <div className="flex items-center md:gap-60 mb-8">
+          <div className="flex items-center justify-between mb-6">
             <label
-              className="text-gray-700 text-sm font-semibold min-w-32 flex items-center"
               htmlFor="stock"
+              className="text-gray-700 text-sm font-semibold min-w-[120px] flex items-center"
             >
               Stock
               <RedStar />
             </label>
-            <input
-              id="stock"
-              type="number"
-              placeholder="Stock"
-              {...register("stock")}
-              className={`appearance-none border rounded w-full py-2 px-3 text-gray-700 placeholder:text-sm placeholder:font-normal leading-tight focus:outline-none focus:shadow-outline ${
-                errors.stock ? "border-red-500" : ""
-              }`}
-            />
-            {errors.stock && (
-              <p className="text-red-500 text-xs italic">
-                {errors.stock.message}
-              </p>
-            )}
+            <div className="flex-1">
+              <input
+                id="stock"
+                type="number"
+                placeholder="Enter stock quantity"
+                {...register("stock")}
+                className={`w-full py-2 px-4 border rounded text-gray-700 focus:outline-none focus:shadow-md transition-all ${
+                  errors.stock ? "border-red-500" : "border-gray-300"
+                }`}
+              />
+              {errors.stock && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.stock.message}
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Description */}
-          <div className="flex items-center md:gap-60 mb-8">
+          <div className="flex items-center justify-between mb-6">
             <label
-              className="text-gray-700 text-sm font-semibold min-w-32 flex items-center"
               htmlFor="description"
+              className="text-gray-700 text-sm font-semibold min-w-[120px] flex items-center"
             >
               Description
               <RedStar />
             </label>
-            <textarea
-              id="description"
-              placeholder="Product description"
-              {...register("description")}
-              className={`appearance-none border rounded w-full py-2 px-3 text-gray-700 placeholder:text-sm placeholder:font-normal leading-tight focus:outline-none focus:shadow-outline ${
-                errors.description ? "border-red-500" : ""
-              }`}
-            />
-            {errors.description && (
-              <p className="text-red-500 text-xs italic">
-                {errors.description.message}
-              </p>
-            )}
+            <div className="flex-1">
+              <textarea
+                id="description"
+                placeholder="Enter product description"
+                {...register("description")}
+                className={`w-full py-2 px-4 border rounded text-gray-700 focus:outline-none focus:shadow-md transition-all ${
+                  errors.description ? "border-red-500" : "border-gray-300"
+                }`}
+              />
+              {errors.description && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.description.message}
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Images */}
-          <div className="flex items-center md:gap-60 mb-8">
+          <div className="flex items-center justify-between mb-6">
             <label
-              className="text-gray-700 text-sm font-semibold min-w-32 flex items-center"
               htmlFor="images"
+              className="text-gray-700 text-sm font-semibold min-w-[120px] flex items-center"
             >
               Image URLs
               <RedStar />
             </label>
-            <div className="flex flex-col gap-4 w-full">
-              <div className="flex items-center gap-2">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-4">
                 <input
                   type="text"
                   placeholder="Enter image URL"
-                  value={newImage} // Controlled input value
+                  value={newImage}
                   onChange={(e) => {
                     setNewImage(e.target.value);
-                    clearErrors("images"); // Clear errors when user types
-                  }} // Update state
-                  className="border p-2 rounded flex-1"
+                    clearErrors("images");
+                  }}
+                  className="w-full py-2 px-4 border rounded focus:outline-none focus:shadow-md"
                 />
                 <button
                   type="button"
-                  className="border p-2 rounded bg-blue-500 text-white"
                   onClick={handleAddImageUrl}
+                  className="py-1 px-8 rounded bg-blue-500 text-white hover:bg-blue-400"
                 >
-                  +
+                  <span className="scale-150 font-bold text-3xl mb-1">+</span>
                 </button>
               </div>
-              <div>
-                {watchImages && watchImages.length > 0 && (
-                  <div className="flex flex-wrap gap-4 mt-4">
-                    {watchImages.map((image: string, index: number) => (
-                      <div key={index} className="relative">
-                        <img
-                          className="h-32 w-32 object-cover rounded-lg shadow-md"
-                          src={image}
-                          alt={`Product image ${index + 1}`}
-                        />
-                        <button
-                          type="button"
-                          className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-0.5 m-1"
-                          onClick={() =>
-                            setValue(
-                              "images",
-                              watchImages.filter((_, i) => i !== index)
-                            )
-                          }
-                        >
-                          <MinusIcon className="h-5 w-5" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+              {watchImages && watchImages.length > 0 && (
+                <div className="flex flex-wrap gap-4">
+                  {watchImages.map((image, index) => (
+                    <div key={index} className="relative">
+                      <img
+                        src={image}
+                        alt={`Product image ${index + 1}`}
+                        className="h-32 w-32 object-cover rounded-md shadow"
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setValue(
+                            "images",
+                            watchImages.filter((_, i) => i !== index)
+                          )
+                        }
+                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                      >
+                        <MinusIcon className="h-5 w-5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {errors.images && (
+                <p className="mt-1 text-xs text-red-500">
+                  {errors.images.message}
+                </p>
+              )}
             </div>
-            {errors.images && (
-              <p className="text-red-500 text-xs italic">
-                {errors.images.message}
-              </p>
-            )}
           </div>
 
           {/* Submit Button */}
-          <button
-            type="submit"
-            className="ml-[23rem] bg-blue-500 hover:bg-blue-400 text-base transition-all duration-300 font-poppins text-white font-bold py-3 px-16 rounded-xl focus:outline-none focus:shadow-outline"
-          >
-            {loading ? <Loading /> : initialProduct ? "Update" : "Save"}
-          </button>
+          <div className="text-right">
+            <button
+              type="submit"
+              className="bg-blue-500 hover:bg-blue-400 text-white text-base font-semibold py-2 px-8 rounded-lg transition-all duration-300 focus:outline-none focus:ring focus:ring-blue-300 disabled:opacity-50"
+              disabled={loading}
+            >
+              {loading ? <Loading /> : initialProduct ? "Update" : "Save"}
+            </button>
+          </div>
         </form>
       </div>
     </>
