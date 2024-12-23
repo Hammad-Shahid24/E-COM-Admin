@@ -136,8 +136,6 @@ const ProductList: FC = () => {
       <ComponentHeader heading="Product List" />
       <FiltrationAndPaging
         items={products}
-        currentPageProducts={currentPageProducts}
-        setCurrentPageProducts={setCurrentPageProducts}
         pageSizeOptions={pageSizeOptions}
         pageSize={pageSize}
         setPageSize={setPageSize}

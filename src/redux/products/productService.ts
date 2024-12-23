@@ -19,6 +19,7 @@ import {
 } from "firebase/firestore";
 import app from "../../config/firebase";
 import { Product } from "../../types/Shopping";
+import { convertTimestampToDate } from "../../utils/ConvertFBTimestampToDate"
 
 const db = getFirestore(app);
 
@@ -36,7 +37,6 @@ export const fetchProducts = async (
     const productsCol = collection(db, "products");
     let q;
 
-    console.log(pageSize, sortField, sortOrder, lastVisible);
 
     if (lastVisible) {
       q = query(
@@ -54,9 +54,15 @@ export const fetchProducts = async (
     const productsList: Product[] = productSnapshot.docs.map((doc) => {
       const data = doc.data() as Product;
 
+      console.log(data)
+
       // Convert Timestamp to Date string (ISO format)
-      data.createdAt = (data.createdAt as Timestamp).toDate().toISOString();
-      data.updatedAt = (data.updatedAt as Timestamp).toDate().toISOString();
+      data.createdAt = convertTimestampToDate(data.createdAt) as Date;
+      // data.updatedAt = data.updatedAt.toDate().toISOString();
+      if (data.discountStartDate && data.discountExpiryDate) {
+        data.discountStartDate = convertTimestampToDate(data.discountStartDate) as Date;
+        data.discountExpiryDate = convertTimestampToDate(data.discountExpiryDate) as Date;
+      }
 
       return { ...data };
     });

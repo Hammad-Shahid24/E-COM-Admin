@@ -201,6 +201,7 @@ const CategoryForm: FC = () => {
 
           {/* Submit Button */}
           <button
+            disabled={loading}
             type="submit"
             className="ml-[23rem] bg-blue-500 hover:bg-blue-400 text-base transition-all duration-300 font-poppins text-white font-bold py-3 px-16 rounded-xl focus:outline-none focus:shadow-outline"
           >

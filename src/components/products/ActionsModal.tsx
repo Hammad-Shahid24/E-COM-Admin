@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { RxCross2, RxCheck } from "react-icons/rx";
 import Loading from "../../shared/Loading";
 import { Product } from "../../types/Shopping";
+import { convertTimestampToDate } from "../../utils/ConvertFBTimestampToDate";
 
 interface ProductActionsModalProps {
   onClose: () => void;
@@ -20,12 +21,22 @@ const ProductActionsModal: FC<ProductActionsModalProps> = ({ onClose }) => {
     (state: RootState) => state.tags
   );
   const { product } = useSelector((state: RootState) => state.products);
+  console.log("Product",  convertTimestampToDate(product?.discountStartDate));
+  console.log(typeof { ...product?.discountStartDate });
 
   // State
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [expiryDate, setExpiryDate] = useState<Date | null>(null);
-  const [discountPercentage, setDiscountPercentage] = useState<number>(0);
+  const [selectedTags, setSelectedTags] = useState<string[]>(
+    product?.tags || []
+  );
+  const [startDate, setStartDate] = useState<Date | null>(
+    convertTimestampToDate(product?.discountStartDate) || null
+  );
+  const [expiryDate, setExpiryDate] = useState<Date | null>(
+    convertTimestampToDate(product?.discountExpiryDate) || null
+  );
+  const [discountPercentage, setDiscountPercentage] = useState<number>(
+    product?.discountPercentage || 0
+  );
 
   useEffect(() => {
     if (tags.length === 0) {
@@ -90,59 +101,6 @@ const ProductActionsModal: FC<ProductActionsModalProps> = ({ onClose }) => {
 
   // Validation for discount percentage
   const handleSubmit = async () => {
-    if (discountPercentage <= 0 || discountPercentage > 100) {
-      toast.error("Discount percentage must be between 1 and 100.", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
-      return;
-    }
-    if (!startDate) {
-      toast.error("Please select a valid start date and time.", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
-      return;
-    }
-    if (!expiryDate) {
-      toast.error("Please select a valid expiry date and time.", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
-      return;
-    }
-    if (selectedTags.length === 0) {
-      toast.error("Please select at least one tag.", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
-      return;
-    }
-
     try {
       if (!product) {
         toast.error("Product not found.", {
@@ -157,25 +115,50 @@ const ProductActionsModal: FC<ProductActionsModalProps> = ({ onClose }) => {
         });
         return;
       }
-
-      console.log("Product", product);
-      console.log("Selected Tags", selectedTags);
-      console.log("Start Date", startDate);
-      console.log("Expiry Date", expiryDate);
-
-      await dispatch(
-        editProduct({
-          id: product.id as string,
-          updatedProduct: {
-            ...product,
-            tags: selectedTags,
-            discountStartDate: startDate,
-            discountExpiryDate: expiryDate,
-            discountPercentage,
-          },
-        })
-      ).unwrap();
-
+  
+      const updatedProduct = { ...product };
+  
+      // Update tags if selected
+      if (selectedTags.length > 0) {
+        updatedProduct.tags = selectedTags;
+      }
+  
+      // Update sale details if provided
+      if (discountPercentage > 0 && discountPercentage <= 100) {
+        if (!startDate) {
+          toast.error("Please select a valid start date and time.", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
+          return;
+        }
+        if (!expiryDate) {
+          toast.error("Please select a valid expiry date and time.", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
+          return;
+        }
+  
+        updatedProduct.discountStartDate = startDate;
+        updatedProduct.discountExpiryDate = expiryDate;
+        updatedProduct.discountPercentage = discountPercentage;
+      }
+  
+      await dispatch(editProduct({ id: product.id as string, updatedProduct })).unwrap();
+  
       toast.success("Product updated successfully!", {
         position: "top-right",
         autoClose: 3000,
@@ -186,7 +169,7 @@ const ProductActionsModal: FC<ProductActionsModalProps> = ({ onClose }) => {
         progress: undefined,
         theme: "colored",
       });
-
+  
       onClose();
     } catch (error) {
       toast.error("Failed to update product. Please try again.", {
@@ -315,7 +298,7 @@ const ProductActionsModal: FC<ProductActionsModalProps> = ({ onClose }) => {
             onClick={handleSubmit}
             className="py-2 px-6 text-sm text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors"
           >
-            Submit
+            {product ? "Update" : "Submit" }
           </button>
         </div>
       </div>

@@ -27,7 +27,11 @@ const store = configureStore({
         ],
         ignoredPaths: [
           "products.lastVisible",
+          "products.discountStartDate",
+          "products.discountExpiryDate",
           "tags.lastVisible",
+          "tags.createdAt",
+          "tags.updatedAt",
           "categories.lastVisible",
           "vouchers.lastVisible",
           "orders.lastVisible",

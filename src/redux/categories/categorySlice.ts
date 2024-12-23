@@ -6,7 +6,6 @@ import {
   deleteCategory,
 } from "./categoryService";
 import { Category } from "../../types/Shopping";
-import { reset } from "../auth/authSlice";
 
 // Define the initial state using the CategoryData type
 interface CategoryState {
