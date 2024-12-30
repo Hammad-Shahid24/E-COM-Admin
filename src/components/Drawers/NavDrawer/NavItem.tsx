@@ -1,4 +1,4 @@
-import { FC, ReactNode, useState, ReactElement } from "react";
+import { FC, ReactElement } from "react";
 import { motion } from "framer-motion";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { GoDiamond } from "react-icons/go";

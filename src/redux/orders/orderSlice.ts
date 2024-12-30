@@ -1,21 +1,16 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import {
-  fetchOrders,
-  addOrder,
-  updateOrder,
-  deleteOrder,
-} from "./orderService";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { fetchOrders, updateOrder, deleteOrder, listenToOrdersCollection } from "./orderService";
 import { Order } from "../../types/Shopping";
-import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
+import { set } from "lodash";
 
-// Define the initial state using the Order type
+// Initial State
 interface OrderState {
   orders: Order[];
   order: Order | null;
   loading: boolean;
   error: string | null;
-  lastVisible: null | QueryDocumentSnapshot<Order, DocumentData>; // Last visible document
-  totalOrders: number | null;
+  lastVisible: any | null;
+  totalOrders: number;
 }
 
 const initialState: OrderState = {
@@ -24,12 +19,14 @@ const initialState: OrderState = {
   loading: false,
   error: null,
   lastVisible: null,
-  totalOrders: null,
+  totalOrders: 0,
 };
 
-// Fetch orders
+
+
+// Fetch Orders with Pagination and Filtering
 export const fetchAllOrders = createAsyncThunk(
-  "order/fetchAllOrders",
+  "orders/fetchAllOrders",
   async (
     {
       pageSize,
@@ -42,98 +39,87 @@ export const fetchAllOrders = createAsyncThunk(
       const state = getState() as { orders: OrderState };
       const lastVisible = state.orders.lastVisible;
 
-      // Call fetchOrders from orderService
+      // Call fetchOrders with lastVisible and pageSize
       const {
         orders,
         lastVisible: updatedLastVisible,
         totalOrders,
       } = await fetchOrders(lastVisible, pageSize, sortField, sortOrder);
 
+      // Return orders and the updated lastVisible value
       return {
         orders,
         lastVisible: updatedLastVisible,
         totalOrders,
       };
     } catch (error: any) {
-      return rejectWithValue(
-        error.message || "An error occurred while fetching orders."
-      );
+      // Catch any error and provide a more informative message
+      let errorMessage = "An error occurred while fetching orders.";
+      if (error instanceof Error) {
+        errorMessage = error.message; // If it's an instance of Error, use the message
+      } else if (typeof error === "string") {
+        errorMessage = error; // If it's a string, just use it directly
+      }
+      return rejectWithValue(errorMessage);
     }
   }
 );
 
-// Add a new order
-export const createOrder = createAsyncThunk(
-  "order/createOrder",
-  async (order: Order, { rejectWithValue }) => {
-    try {
-      const newOrder = await addOrder(order);
-      return newOrder;
-    } catch (error: any) {
-      return rejectWithValue(
-        error.message || "An error occurred while adding the order."
-      );
-    }
-  }
-);
-
-// Update an order
+// Edit Order
 export const editOrder = createAsyncThunk(
-  "order/editOrder",
-  async (
-    { id, updatedOrder }: { id: string; updatedOrder: Order },
-    { rejectWithValue }
-  ) => {
+  "orders/editOrder",
+  async ({ id, updatedOrder }: { id: string; updatedOrder: Order }, { rejectWithValue }) => {
     try {
-      const updated = await updateOrder(id, updatedOrder);
-      return updated;
-    } catch (error: any) {
-      return rejectWithValue(
-        error.message || "An error occurred while updating the order."
-      );
+      const result = await updateOrder(id, updatedOrder);
+      return { id, updatedOrder: result };
+    } catch (error) {
+      return rejectWithValue(error instanceof Error ? error.message : String(error));
     }
   }
 );
 
-// Delete an order
+// Delete Order
 export const removeOrder = createAsyncThunk(
-  "order/removeOrder",
+  "orders/removeOrder",
   async (id: string, { rejectWithValue }) => {
     try {
       await deleteOrder(id);
-      return id; // Return the order ID upon successful deletion
-    } catch (error: any) {
-      return rejectWithValue(
-        error.message || "An error occurred while deleting the order."
-      );
+      return id;
+    } catch (error) {
+      return rejectWithValue(error instanceof Error ? error.message : String(error));
     }
   }
+
 );
 
+
+// Slice
 const orderSlice = createSlice({
-  name: "order",
+  name: "orders",
   initialState,
   reducers: {
-    resetState: (state) => {
-      state.orders = [];
-      state.loading = false;
-      state.error = null;
-      state.lastVisible = null;
-    },
-    clearError: (state) => {
+    resetState: () => initialState,
+    clearError(state) {
       state.error = null;
     },
-    setOrderById: (state, action) => {
-      state.order =
-        state.orders.find((order) => order.id === action.payload) ?? null;
+    setOrderById(state, action: PayloadAction<string>) {
+      const foundOrder = state.orders.find((order) => order.id === action.payload);
+      if (foundOrder) state.order = foundOrder;
     },
-    resetOrder: (state) => {
+    resetOrder(state) {
       state.order = null;
     },
-    resetOrders: (state) => {
+    resetOrders(state) {
       state.orders = [];
       state.lastVisible = null;
+      state.totalOrders = 0;
     },
+    setOrders(state, action: PayloadAction<Order[]>) {
+      // Filter out duplicate orders
+      const newOrders = action.payload.filter(
+        (newOrder) => !state.orders.some((order) => order.id === newOrder.id)
+      );
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -145,66 +131,46 @@ const orderSlice = createSlice({
       .addCase(fetchAllOrders.fulfilled, (state, action) => {
         state.loading = false;
 
-        // Filter out orders already in the state
+        // Filter out duplicate orders
         const newOrders = action.payload.orders.filter(
           (newOrder) => !state.orders.some((order) => order.id === newOrder.id)
         );
 
+        //Concatenate the new orders with the existing orders
         state.orders = state.orders.concat(newOrders);
-        state.lastVisible = action.payload.lastVisible as QueryDocumentSnapshot<
-          Order,
-          DocumentData
-        > | null;
+        state.lastVisible = action.payload.lastVisible;
         state.totalOrders = action.payload.totalOrders;
+
+
+
       })
       .addCase(fetchAllOrders.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
-
-      // Create Order
-      .addCase(createOrder.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(createOrder.fulfilled, (state, action) => {
-        state.loading = false;
-        state.orders.push(action.payload as Order);
-      })
-      .addCase(createOrder.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      })
-
-      // Update Order
+      // Edit Order
       .addCase(editOrder.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(editOrder.fulfilled, (state, action) => {
+        const { id, updatedOrder } = action.payload;
+        state.orders = state.orders.map((order) => (order.id === id ? updatedOrder : order));
         state.loading = false;
-        const index = state.orders.findIndex(
-          (order) => order.id === (action.payload as Order).id
-        );
-        if (index !== -1) {
-          state.orders[index] = action.payload as Order;
-        }
       })
       .addCase(editOrder.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
-
-      // Delete Order
+      // Remove Order
       .addCase(removeOrder.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(removeOrder.fulfilled, (state, action) => {
+        const id = action.payload;
+        state.orders = state.orders.filter((order) => order.id !== id);
         state.loading = false;
-        state.orders = state.orders.filter(
-          (order) => order.id !== action.payload
-        );
       })
       .addCase(removeOrder.rejected, (state, action) => {
         state.loading = false;
@@ -213,7 +179,10 @@ const orderSlice = createSlice({
   },
 });
 
-export const { resetState, clearError, setOrderById, resetOrder, resetOrders } =
-  orderSlice.actions;
+// Exported Actions
+export const { resetState, clearError, setOrderById, resetOrder, resetOrders, setOrders } = orderSlice.actions;
 
+// Exported Reducer
 export default orderSlice.reducer;
+
+

@@ -8,7 +8,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { toast } from "react-toastify";
 import { RxCross2, RxCheck } from "react-icons/rx";
 import Loading from "../../shared/Loading";
-import { Product } from "../../types/Shopping";
+// import { Product } from "../../types/Shopping";
 import { convertTimestampToDate } from "../../utils/ConvertFBTimestampToDate";
 
 interface ProductActionsModalProps {

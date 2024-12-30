@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from "react";
+import { FC, useEffect } from "react";
 
 interface PaginationProps {
   items: any[];
@@ -54,11 +54,10 @@ const Pagination: FC<PaginationProps> = ({
       {/* Previous Button */}
       <button
         onClick={handlePrevious}
-        className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-          currentPage === 1
+        className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${currentPage === 1
             ? "cursor-not-allowed opacity-50 text-gray-400"
             : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 hover:dark:bg-gray-600"
-        }`}
+          }`}
         disabled={currentPage === 1}
       >
         Prev
@@ -72,11 +71,10 @@ const Pagination: FC<PaginationProps> = ({
       {/* Next Button */}
       <button
         onClick={handleNext}
-        className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-          currentPage === totalPages
+        className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${currentPage === totalPages
             ? "cursor-not-allowed opacity-50 text-gray-400"
             : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 hover:dark:bg-gray-600"
-        }`}
+          }`}
         disabled={currentPage === totalPages}
       >
         Next

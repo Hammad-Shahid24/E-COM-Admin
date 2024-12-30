@@ -42,15 +42,14 @@ export interface Voucher {
 }
 
 export interface Order {
-  id?: string;
-  userId: string;
-  shippingAddress: ShippingAddress;
-  products: Product[]; // Array of products
-  totalAmount: number;
+  id?: string; // Unique ID for the order
+  userId: string; // Reference to the user ID
+  orderItems: {product: Product, quantity: number}[]; // Array of cart items
+  total: number; // Total amount for the order
+  voucherId?: string; // Reference to the voucher ID
   status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
-  voucher?: Voucher;
-  createdAt?: Timestamp | Date | string;
-  updatedAt?: Timestamp | Date | string;
+  createdAt: Date; // Order creation date
+  updatedAt: Date; // Order last update date
 }
 
 export interface ShippingAddress {

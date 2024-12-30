@@ -2,32 +2,55 @@ import {
   getFirestore,
   collection,
   getDocs,
-  addDoc,
-  updateDoc,
   query,
   where,
-  doc,
-  deleteDoc,
-  serverTimestamp,
-  QueryDocumentSnapshot,
   orderBy,
   limit,
   startAfter,
-  Timestamp,
+  QueryDocumentSnapshot,
   getCountFromServer,
   DocumentData,
+  deleteDoc,
+  doc,
+  serverTimestamp,
+  updateDoc,
+  onSnapshot,
 } from "firebase/firestore";
 import app from "../../config/firebase";
 import { Order } from "../../types/Shopping";
+import { convertTimestampToDate } from "../../utils/ConvertFBTimestampToDate";
 
 const db = getFirestore(app);
 
-// Fetch paginated and sorted orders
+export const listenToOrdersCollection = (
+  callback: (orders: Order[]) => void
+) => {
+  const ordersCol = collection(db, "orders");
+
+  const q = query(ordersCol, orderBy("createdAt", "desc"));
+
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const ordersList: Order[] = querySnapshot.docs.map((doc) => {
+      const data = doc.data() as Order;
+
+      // Convert Firestore Timestamps to native Date objects
+      data.createdAt = convertTimestampToDate(data.createdAt) as Date;
+      data.updatedAt = convertTimestampToDate(data.updatedAt) as Date;
+
+      return { ...data, id: doc.id }; // Include Firestore doc ID
+    });
+
+    callback(ordersList);
+  });
+
+  return unsubscribe;
+}
+
 export const fetchOrders = async (
   lastVisible: QueryDocumentSnapshot<Order> | null | string = null,
   pageSize: number = 1,
   sortField: string = "createdAt",
-  sortOrder: "asc" | "desc" = "desc"
+  sortOrder: "asc" | "desc" = "desc",
 ): Promise<{
   orders: Order[];
   lastVisible: QueryDocumentSnapshot<Order, DocumentData> | string | null;
@@ -37,8 +60,7 @@ export const fetchOrders = async (
     const ordersCol = collection(db, "orders");
     let q;
 
-    console.log(pageSize, sortField, sortOrder, lastVisible);
-
+    // Add pagination (startAfter)
     if (lastVisible) {
       q = query(
         ordersCol,
@@ -50,23 +72,31 @@ export const fetchOrders = async (
       q = query(ordersCol, orderBy(sortField, sortOrder), limit(pageSize));
     }
 
+    // Execute query
     const orderSnapshot = await getDocs(q);
 
+    // Process orders
     const ordersList: Order[] = orderSnapshot.docs.map((doc) => {
       const data = doc.data() as Order;
 
-      // Convert Timestamp to Date string (ISO format)
-      data.createdAt = (data.createdAt as Timestamp).toDate().toISOString();
-      data.updatedAt = (data.updatedAt as Timestamp).toDate().toISOString();
+      // Convert Firestore Timestamps to native Date objects
+      data.createdAt = convertTimestampToDate(data.createdAt) as Date;
+      data.updatedAt = convertTimestampToDate(data.updatedAt) as Date;
 
-      return { ...data };
+      return { ...data, id: doc.id }; // Include Firestore doc ID
     });
 
-    const lastVisibleDocRef = orderSnapshot.docs[orderSnapshot.docs.length - 1];
+    // Determine the last visible document for pagination
+    const lastVisibleDocRef =
+      orderSnapshot.docs.length > 0
+        ? orderSnapshot.docs[orderSnapshot.docs.length - 1]
+        : null;
 
+    // Fetch total count of documents (useful for UI/UX)
     const totalCountSnapshot = await getCountFromServer(ordersCol);
     const totalOrders = totalCountSnapshot.data().count;
 
+    // Return paginated data
     return {
       orders: ordersList,
       lastVisible: lastVisibleDocRef as QueryDocumentSnapshot<Order>,
@@ -74,35 +104,10 @@ export const fetchOrders = async (
     };
   } catch (error) {
     console.error("Error fetching orders:", error);
-    if (error instanceof Error) {
-      throw new Error("Error fetching orders: " + error.message);
-    } else {
-      throw new Error("Error fetching orders: " + String(error));
-    }
-  }
-};
-
-// Add a new order to Firestore
-export const addOrder = async (order: Order): Promise<Order> => {
-  try {
-    const ordersCol = collection(db, "orders");
-
-    const docRef = await addDoc(ordersCol, {
-      ...order,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    });
-
-    await updateDoc(docRef, { id: docRef.id });
-
-    return { ...order, id: docRef.id };
-  } catch (error) {
-    console.error("Error adding order:", error);
-    if (error instanceof Error) {
-      throw new Error("Error adding order: " + error.message);
-    } else {
-      throw new Error("Error adding order: " + String(error));
-    }
+    throw new Error(
+      "Error fetching orders: " +
+        (error instanceof Error ? error.message : String(error))
+    );
   }
 };
 

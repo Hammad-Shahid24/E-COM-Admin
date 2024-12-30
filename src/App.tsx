@@ -18,6 +18,7 @@ import TagList from "./components/tags/TagList";
 import TagForm from "./components/tags/TagForm";
 import VoucherList from "./components/vouchers/VoucherList";
 import OrderList from "./components/orders/OrderList";
+import OrderDetails from "./components/orders/OrderDetails";
 
 const App: FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -41,7 +42,8 @@ const App: FC = () => {
             <Route path="tags/*" element={<TagForm />} />
             <Route path="vouchers" element={<VoucherList />} />
             <Route path="orders" element={<OrderList />} />
-          </Route>
+            <Route path="orders/*" element={<OrderDetails />} />
+            </Route>
         </Routes>
         <ToastContainer />
       </Router>

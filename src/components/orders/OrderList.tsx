@@ -7,8 +7,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../app/store";
 import {
   fetchAllOrders,
+  editOrder,
   removeOrder,
-  resetOrder,
+  // resetOrder,
   // resetOrders,
   setOrderById,
 } from "../../redux/orders/orderSlice";
@@ -28,17 +29,7 @@ const OrdersList: FC = () => {
     (state: RootState) => state.orders
   );
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleOpenModal = (order: Order) => {
-    dispatch(setOrderById(order.id!));
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    dispatch(resetOrder());
-    setIsModalOpen(false);
-  };
 
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPageOrders, setCurrentPageOrders] = useState<Order[]>([]);
@@ -98,23 +89,65 @@ const OrdersList: FC = () => {
   };
 
   // Handle the editing of an order
-  const handleEdit = (order: Order) => {
-    // Navigate to the edit page
-    navigate(`edit/${order.id}`, {
-      state: { order }, // Passing the order data to the edit page
-    });
+  const handleEdit = async (order: Order) => {
+    try {
+      // Show SweetAlert modal with a select dropdown for order status
+      const { value: newStatus } = await Swal.fire({
+        title: `Edit Order #${order.id}`,
+        input: "select",
+        inputOptions: {
+          pending: "Pending",
+          confirmed: "Confirmed",
+          shipped: "Shipped",
+          delivered: "Delivered",
+          cancelled: "Cancelled",
+        },
+        inputPlaceholder: "Select a new status",
+        inputValue: order.status,
+        showCancelButton: true,
+        confirmButtonText: "Update",
+        showLoaderOnConfirm: true,
+        preConfirm: async (newStatus) => {
+          if (!newStatus) {
+            Swal.showValidationMessage("Please select a new status");
+            return;
+          }
+          return newStatus; // Pass the status to the `value` for further processing
+        },
+      });
+  
+      if (!newStatus) return; // User canceled the modal
+  
+      // Dispatch Redux action to update the order
+      await dispatch(
+        editOrder({
+          id: order.id!,
+          updatedOrder: { ...order, status: newStatus },
+        })
+      );
+  
+      // Show success notification
+      Swal.fire({
+        icon: "success",
+        title: "Order updated successfully!",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+  
+    } catch (error) {
+      // Show error notification
+      Swal.fire({
+        icon: "error",
+        title: "Failed to update order!",
+        text: error instanceof Error ? error.message : String(error),
+      });
+    }
   };
-
+  
   // Handle the viewing of an order
   const handleView = (order: Order) => {
-    Swal.fire({
-      title: `Order #${order.id}`,
-      text: `Customer: ${order.userId}\nTotal: $${order.totalAmount}`,
-      showCloseButton: true,
-      showCancelButton: false,
-      showConfirmButton: false,
-      padding: "1rem",
-    });
+    dispatch(setOrderById(order.id!));
+    navigate(`details`);
   };
 
   if (loading) {
@@ -193,8 +226,12 @@ const OrdersList: FC = () => {
                 Order ID
               </th>
               <th className="px-4 py-2 bg-gray-50 text-left text-base font-semibold text-gray-900 w-1/4">
-                Customer Name
+                Placed At
               </th>
+              <th className="px-4 py-2 bg-gray-50 text-left text-base font-semibold text-gray-900 w-1/4">
+                Status
+              </th>
+              
               <th className="px-4 py-2 bg-gray-50 text-left text-base font-semibold text-gray-900 w-1/4">
                 Total
               </th>
@@ -222,20 +259,23 @@ const OrdersList: FC = () => {
 
                   <td className="py-1 px-4 w-1/4">
                     <span className="text-sm text-gray-700 font-medium">
-                      ${order.totalAmount}
+                      {order.createdAt.toDateString()}
+                    </span>
+                  </td>
+                  <td className="py-1 px-4 w-1/4">
+                    <span className="text-sm text-gray-700 font-medium">
+                      {order.status}
+                    </span>
+                  </td>
+
+                  <td className="py-1 px-4 w-1/4">
+                    <span className="text-sm text-gray-700 font-medium">
+                      ${order.total}
                     </span>
                   </td>
                   <td className="py-1 pr-4 w-1/4">
                     <div className="flex gap-x-1 justify-start">
-                      {/* Actions Button with Tooltip */}
-                      <button
-                        data-tooltip-id="my-tooltip"
-                        data-tooltip-content="Actions"
-                        onClick={() => handleOpenModal(order)} // Passing order to the view handler
-                        className="flex items-center px-3 py-1.5 text-sm text-teal-800 hover:bg-blue-100 rounded-lg transition-colors"
-                      >
-                        <FaRegEye />
-                      </button>
+                    
 
                       {/* View Button with Tooltip */}
                       <button
@@ -250,7 +290,7 @@ const OrdersList: FC = () => {
                       {/* Edit Button with Tooltip */}
                       <button
                         data-tooltip-id="my-tooltip"
-                        data-tooltip-content="Edit"
+                        data-tooltip-content="Update Status"
                         onClick={() => handleEdit(order)} // Passing order to the edit handler
                         className="flex items-center px-3 py-1.5 text-sm text-blue-500 hover:bg-blue-100 rounded-lg transition-colors"
                       >
