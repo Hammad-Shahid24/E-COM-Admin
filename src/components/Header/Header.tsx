@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { toast } from "react-toastify"; // Assuming you are using react-toastify for notifications
 import { listenToOrdersCollection } from "../../redux/orders/orderService"; // Import listener
 import { useDispatch } from "react-redux";
-import { setOrders } from "../../redux/orders/orderSlice"; // Assuming you have this action to update orders in redux
+// import { setOrders } from "../../redux/orders/orderSlice"; // Assuming you have this action to update orders in redux
 
 interface HeaderProps {
   toggleDrawer: () => void;
@@ -21,7 +21,7 @@ const Header: FC<HeaderProps> = ({ toggleDrawer, isDrawerOpen }) => {
   useEffect(() => {
     const unsubscribe = listenToOrdersCollection((orders) => {
       // Update orders in the Redux store
-      dispatch(setOrders(orders));
+      // dispatch(setOrders(orders));
 
       // Check if new orders exist and display notification
       if (orders && orders.length > 0) {
@@ -46,9 +46,8 @@ const Header: FC<HeaderProps> = ({ toggleDrawer, isDrawerOpen }) => {
           <div className="flex items-center gap-2 pl-5 animate-all duration-300">
             <RiMenuUnfoldFill
               onClick={toggleDrawer}
-              className={`${
-                isDrawerOpen && " hidden "
-              } w-6 h-6 text-blue-600 hover:text-blue-800 cursor-pointer animate-all duration-300`}
+              className={`${isDrawerOpen && " hidden "
+                } w-6 h-6 text-blue-600 hover:text-blue-800 cursor-pointer animate-all duration-300`}
             />
           </div>
           <div className="flex items-center pr-5 gap-5">
