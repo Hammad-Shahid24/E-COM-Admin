@@ -113,12 +113,12 @@ const orderSlice = createSlice({
       state.lastVisible = null;
       state.totalOrders = 0;
     },
-    setOrders(state, action: PayloadAction<Order[]>) {
-      // Filter out duplicate orders
-      // const newOrders = action.payload.filter(
-      //   (newOrder) => !state.orders.some((order) => order.id === newOrder.id)
-      // );
-    }
+    // setOrders(state, action: PayloadAction<Order[]>) {
+    //   // Filter out duplicate orders
+    //   // const newOrders = action.payload.filter(
+    //   //   (newOrder) => !state.orders.some((order) => order.id === newOrder.id)
+    //   // );
+    // }
   },
   extraReducers: (builder) => {
     builder
@@ -179,7 +179,7 @@ const orderSlice = createSlice({
 });
 
 // Exported Actions
-export const { resetState, clearError, setOrderById, resetOrder, resetOrders, setOrders } = orderSlice.actions;
+export const { resetState, clearError, setOrderById, resetOrder, resetOrders } = orderSlice.actions;
 
 // Exported Reducer
 export default orderSlice.reducer;
