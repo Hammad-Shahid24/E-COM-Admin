@@ -22,7 +22,10 @@ export const fetchVouchers = async (): Promise<Voucher[]> => {
     const voucherSnapshot = await getDocs(vouchersCol);
 
     // Map each document to the Voucher type with proper type assertion
-    const vouchersList: Voucher[] = voucherSnapshot.docs;
+    const vouchersList: Voucher[] = voucherSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    } as Voucher));
 
     console.log(vouchersList);
 

@@ -1,4 +1,4 @@
-import { FC, useState, } from "react";
+import { FC, } from "react";
 import { Product, Order } from "../types/Shopping";
 
 interface FilteringAndPagingProps {
@@ -28,12 +28,12 @@ const FilteringAndPaging: FC<FilteringAndPagingProps> = ({
   sortOptions,
   onSortChange,
 }) => {
-  const [searchTerm, setSearchTerm] = useState("");
+  // const [searchTerm, setSearchTerm] = useState("");
 
   // Handle search input change
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
+  // const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setSearchTerm(e.target.value);
+  // };
 
   // Handle page size change and fetch more products if needed
   const handlePageSizeChange = async (
