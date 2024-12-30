@@ -9,7 +9,7 @@ import Footer from "./Footer/Footer";
 const Layout: FC = () => {
   const { user } = useSelector((state: RootState) => state.auth); // Get user from Redux state
   const navigate = useNavigate();
-  const [isNavDrawerOpen, setIsNavDrawerOpen] = useState(false); // State to manage nav drawer visibility
+  const [isNavDrawerOpen, setIsNavDrawerOpen] = useState(true); // State to manage nav drawer visibility
   const location = useLocation(); // Get current location (route)
 
   useLayoutEffect(() => {
@@ -29,9 +29,8 @@ const Layout: FC = () => {
   return (
     <div className="w-full max-h-screen bg-[#f2f7fb]">
       <div
-        className={`max-w-full mx-auto transition-all duration-300 ${
-          isNavDrawerOpen ? "ml-[19rem]" : "ml-0"
-        }`}
+        className={`max-w-full mx-auto transition-all duration-300 ${isNavDrawerOpen ? "ml-[19rem]" : "ml-0"
+          }`}
       >
         {/* Fixed Header */}
         <Header isDrawerOpen={isNavDrawerOpen} toggleDrawer={toggleNavDrawer} />
@@ -40,8 +39,8 @@ const Layout: FC = () => {
         <NavDrawer
           isOpen={isNavDrawerOpen}
           onClose={toggleNavDrawer}
-          toggleAuthDrawer={() => {}}
-          toggleSearchDrawer={() => {}}
+          toggleAuthDrawer={() => { }}
+          toggleSearchDrawer={() => { }}
         />
 
         {/* Main Content Area */}

@@ -17,6 +17,7 @@ import ProductForm from "./components/products/ProductForm";
 import TagList from "./components/tags/TagList";
 import TagForm from "./components/tags/TagForm";
 import VoucherList from "./components/vouchers/VoucherList";
+import VoucherForm from "./components/vouchers/VoucherForm"
 import OrderList from "./components/orders/OrderList";
 import OrderDetails from "./components/orders/OrderDetails";
 
@@ -41,9 +42,10 @@ const App: FC = () => {
             <Route path="tags" element={<TagList />} />
             <Route path="tags/*" element={<TagForm />} />
             <Route path="vouchers" element={<VoucherList />} />
+            <Route path="vouchers/*" element={<VoucherForm />} />
             <Route path="orders" element={<OrderList />} />
             <Route path="orders/*" element={<OrderDetails />} />
-            </Route>
+          </Route>
         </Routes>
         <ToastContainer />
       </Router>

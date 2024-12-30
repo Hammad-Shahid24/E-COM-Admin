@@ -2,7 +2,11 @@ import { FC, useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 
-const UserDropdown: FC = () => {
+interface UserDropdownProps {
+  handleLogout: () => Promise<void>;
+}
+
+const UserDropdown: FC<UserDropdownProps> = ({ handleLogout }) => {
   const { user } = useSelector((state: RootState) => state.auth);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -50,7 +54,7 @@ const UserDropdown: FC = () => {
       </button>
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-20">
-          <a
+          {/* <a
             href="#profile"
             className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
@@ -61,13 +65,13 @@ const UserDropdown: FC = () => {
             className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             Settings
-          </a>
-          <a
-            href="#logout"
-            className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+          </a> */}
+          <button
+            onClick={handleLogout}
+            className="block w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             Logout
-          </a>
+          </button>
         </div>
       )}
     </div>

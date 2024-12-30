@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import { listenToOrdersCollection } from "../../redux/orders/orderService";
 import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../app/store";
+import { logOut } from "../../redux/auth/authSlice";
 
 interface HeaderProps {
   toggleDrawer: () => void;
@@ -17,7 +19,7 @@ const Header: FC<HeaderProps> = ({ toggleDrawer, isDrawerOpen }) => {
   const [lastOrderId, setLastOrderId] = useState<string | null>(null);
   const [notifications, setNotifications] = useState<string[]>([]); // Store notification messages
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for dropdown visibility
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
     const unsubscribe = listenToOrdersCollection((orders) => {
@@ -47,6 +49,10 @@ const Header: FC<HeaderProps> = ({ toggleDrawer, isDrawerOpen }) => {
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
     if (isDropdownOpen) setNewOrderCount(0); // Reset the notification count when dropdown closes
+  };
+
+  const handleLogout = async (): Promise<void> => {
+    await dispatch(logOut());
   };
 
   return (
@@ -96,7 +102,7 @@ const Header: FC<HeaderProps> = ({ toggleDrawer, isDrawerOpen }) => {
                 </div>
               )}
             </motion.div>
-            <UserDropdown />
+            <UserDropdown handleLogout={handleLogout} />
           </div>
         </div>
       </div>

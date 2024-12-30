@@ -1,12 +1,12 @@
-import { FC,  } from "react";
+import { FC, } from "react";
 import NavItem from "./NavItem";
 import { MdDashboard } from "react-icons/md";
 import { TbRosetteDiscountFilled } from "react-icons/tb";
 // import { PiListHeartFill } from "react-icons/pi";
 
-import { FaPeopleGroup } from "react-icons/fa6";
-import { AiFillSetting } from "react-icons/ai";
-import { IoDocumentsSharp } from "react-icons/io5";
+// import { FaPeopleGroup } from "react-icons/fa6";
+// import { AiFillSetting } from "react-icons/ai";
+// import { IoDocumentsSharp } from "react-icons/io5";
 import { RiMenuFoldFill } from "react-icons/ri";
 import { Square3Stack3DIcon, CubeIcon } from "@heroicons/react/20/solid";
 import { SiAftership } from "react-icons/si";
@@ -140,7 +140,7 @@ const NavDrawerContent: FC<NavDrawerContentProps> = ({
           ]}
           onClick={() => navigate("deals")}
         /> */}
-        <NavItem
+        {/* <NavItem
           family="CUSTOMERS"
           icon={<FaPeopleGroup />}
           label="Customers"
@@ -154,8 +154,8 @@ const NavDrawerContent: FC<NavDrawerContentProps> = ({
             { label: "New Customer", onClick: () => navigate("customers/new") },
           ]}
           onClick={() => navigate("customers")}
-        />
-        <NavItem
+        /> */}
+        {/* <NavItem
           family="SETTINGS"
           icon={<AiFillSetting />}
           label="Settings"
@@ -172,8 +172,8 @@ const NavDrawerContent: FC<NavDrawerContentProps> = ({
             },
           ]}
           onClick={() => navigate("settings")}
-        />
-        <NavItem
+        /> */}
+        {/* <NavItem
           family="PAGES"
           icon={<IoDocumentsSharp />}
           label="Pages"
@@ -187,7 +187,7 @@ const NavDrawerContent: FC<NavDrawerContentProps> = ({
             { label: "About", onClick: () => navigate("about") },
           ]}
           onClick={() => navigate("pages")}
-        />
+        /> */}
         <div className=" bg-white w-full py-16 ">
           <div className="flex flex-col items-center  text-center mx-14">
             <img src={Bot} alt="Bot" className="w-24 h-24 mb-4" />
