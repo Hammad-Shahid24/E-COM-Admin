@@ -20,9 +20,11 @@ import VoucherList from "./components/vouchers/VoucherList";
 import VoucherForm from "./components/vouchers/VoucherForm"
 import OrderList from "./components/orders/OrderList";
 import OrderDetails from "./components/orders/OrderDetails";
+import RequireAuth from "./utils/RequireAuth";
 
 const App: FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+
   useEffect(() => {
     dispatch(initializeAuth());
   }, [dispatch]);
@@ -32,20 +34,28 @@ const App: FC = () => {
       <Router>
         <Routes>
           <Route path="/" element={<AuthPage />} />
-          <Route path="dashboard" element={<Layout />}>
-            <Route path="*" element={<div>404</div>} />
-            <Route path="collections/*" element={<CollectionPage />} />
+          <Route
+            path="dashboard"
+            element={
+              <RequireAuth>
+                <Layout />
+              </RequireAuth>
+            }
+          >
+            <Route path="*" element={<div>404 - Not Found</div>} />
+            <Route path="tags" element={<TagList />} />
+            <Route path="tags/*" element={<TagForm />} />
             <Route path="categories" element={<CategoryList />} />
             <Route path="categories/*" element={<CategoryForm />} />
             <Route path="products" element={<ProductList />} />
             <Route path="products/*" element={<ProductForm />} />
-            <Route path="tags" element={<TagList />} />
-            <Route path="tags/*" element={<TagForm />} />
-            <Route path="vouchers" element={<VoucherList />} />
-            <Route path="vouchers/*" element={<VoucherForm />} />
             <Route path="orders" element={<OrderList />} />
             <Route path="orders/*" element={<OrderDetails />} />
+            <Route path="collections/*" element={<CollectionPage />} />
+            <Route path="vouchers" element={<VoucherList />} />
+            <Route path="vouchers/*" element={<VoucherForm />} />
           </Route>
+          <Route path="*" element={<div>404 - Page Not Found</div>} />
         </Routes>
         <ToastContainer />
       </Router>

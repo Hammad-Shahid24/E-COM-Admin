@@ -1,22 +1,12 @@
-import { FC, useState, useLayoutEffect } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../app/store";
-import { useNavigate, Outlet, useLocation } from "react-router-dom";
+import { FC, useState } from "react";
+import { useLocation, Outlet } from "react-router-dom";
 import Header from "./Header/Header";
 import NavDrawer from "../components/Drawers/NavDrawer/NavDrawer";
 import Footer from "./Footer/Footer";
 
 const Layout: FC = () => {
-  const { user } = useSelector((state: RootState) => state.auth); // Get user from Redux state
-  const navigate = useNavigate();
   const [isNavDrawerOpen, setIsNavDrawerOpen] = useState(true); // State to manage nav drawer visibility
   const location = useLocation(); // Get current location (route)
-
-  useLayoutEffect(() => {
-    if (!user) {
-      navigate("/"); // Redirect to login if no user is found
-    }
-  }, [user, navigate]);
 
   const toggleNavDrawer = () => {
     setIsNavDrawerOpen(!isNavDrawerOpen);
@@ -44,7 +34,7 @@ const Layout: FC = () => {
         />
 
         {/* Main Content Area */}
-        <div className="mt-[68px] p-4 bg-transparent overflow-y-auto ">
+        <div className="mt-[68px] p-4 bg-transparent overflow-y-auto">
           {isDashboardRoute && isOutletEmpty ? (
             // This content will be displayed when "/dashboard" route is active with no child route
             <div>

@@ -1,7 +1,7 @@
 import { FC, } from "react";
 import NavItem from "./NavItem";
 import { MdDashboard } from "react-icons/md";
-import { TbRosetteDiscountFilled } from "react-icons/tb";
+// import { TbRosetteDiscountFilled } from "react-icons/tb";
 // import { PiListHeartFill } from "react-icons/pi";
 
 // import { FaPeopleGroup } from "react-icons/fa6";
@@ -112,7 +112,7 @@ const NavDrawerContent: FC<NavDrawerContentProps> = ({
           ]}
           onClick={() => navigate("tags")}
         />
-        <NavItem
+        {/* <NavItem
           icon={<TbRosetteDiscountFilled />}
           label="Vouchers"
           expandable
@@ -125,7 +125,7 @@ const NavDrawerContent: FC<NavDrawerContentProps> = ({
             { label: "New Voucher", onClick: () => navigate("vouchers/new") },
           ]}
           onClick={() => navigate("vouchers")}
-        />
+        /> */}
         {/* <NavItem
           icon={<PiListHeartFill />}
           label="Deals"
