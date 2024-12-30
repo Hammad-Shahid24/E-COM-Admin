@@ -60,7 +60,7 @@ const VoucherList: FC = () => {
             Swal.fire(
               "Error!",
               "There was an error deleting the voucher.",
-              "error"
+              error
             );
           });
       } else if (result.dismiss === Swal.DismissReason.cancel) {

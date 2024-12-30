@@ -57,7 +57,7 @@ const TagList: FC = () => {
             Swal.fire(
               "Error!",
               "There was an error deleting the tag.",
-              "error"
+              error
             );
           });
       } else if (result.dismiss === Swal.DismissReason.cancel) {

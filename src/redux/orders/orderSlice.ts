@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { fetchOrders, updateOrder, deleteOrder, listenToOrdersCollection } from "./orderService";
+import { fetchOrders, updateOrder, deleteOrder, } from "./orderService";
 import { Order } from "../../types/Shopping";
-import { set } from "lodash";
 
 // Initial State
 interface OrderState {
@@ -116,9 +115,9 @@ const orderSlice = createSlice({
     },
     setOrders(state, action: PayloadAction<Order[]>) {
       // Filter out duplicate orders
-      const newOrders = action.payload.filter(
-        (newOrder) => !state.orders.some((order) => order.id === newOrder.id)
-      );
+      // const newOrders = action.payload.filter(
+      //   (newOrder) => !state.orders.some((order) => order.id === newOrder.id)
+      // );
     }
   },
   extraReducers: (builder) => {

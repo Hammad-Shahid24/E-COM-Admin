@@ -83,7 +83,6 @@
 
 // export default CollectionPages;
 
-import React from "react";
 
 const CollectionPages = () => {
   return <div></div>;

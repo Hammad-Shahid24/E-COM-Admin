@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo } from "react";
+import { FC, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ComponentHeader from "../../shared/ComponentHeader";
 import { FaEdit, FaTrash, FaRegEye } from "react-icons/fa"; // Importing icons
@@ -61,7 +61,7 @@ const CategoryList: FC = () => {
             Swal.fire(
               "Error!",
               "There was an error deleting the category.",
-              "error"
+              error
             );
           });
       } else if (result.dismiss === Swal.DismissReason.cancel) {

@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchTags, addTag, updateTag, deleteTag } from "./tagService";
 import { Tag } from "../../types/Shopping";
-import { reset } from "../auth/authSlice";
 
 // Define the initial state using the TagsData type
 interface TagsState {

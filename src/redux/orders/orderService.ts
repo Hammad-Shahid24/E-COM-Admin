@@ -3,7 +3,6 @@ import {
   collection,
   getDocs,
   query,
-  where,
   orderBy,
   limit,
   startAfter,
@@ -106,7 +105,7 @@ export const fetchOrders = async (
     console.error("Error fetching orders:", error);
     throw new Error(
       "Error fetching orders: " +
-        (error instanceof Error ? error.message : String(error))
+      (error instanceof Error ? error.message : String(error))
     );
   }
 };
